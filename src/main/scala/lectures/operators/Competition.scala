@@ -27,21 +27,35 @@ package lectures.operators
 
 object Competition extends App {
 
-  val locals = Map("Artem" -> 6, "Sergey" -> 5, "Anton" -> 2, "Vladimir" -> "2", "Alexander" -> 4D)
+  val locals = Array("Artem" -> 6, "Sergey" -> 5, "Anton" -> 2, "Vladimir" -> "2", "Alexander" -> 4D)
   val foreigners = Map[String, Int]("John" -> 3, "James" -> 1, "Tom" -> 2, "Dick" -> 5, "Eric" -> 6)
 
-  //  val results = for (l <- locals;
-  //                     ???) {
-  //    val localName = l._1
-  //    val localValue = l._2
-  //    ???
-  //  }
+  def convertToInt(x: Any): Int = {
+    x match {
+      case a: Int => a
+      case a: Double => a.toInt
+      case a: String => a.toInt
+      case a: Any => a.toString.toFloat.toInt
+    }
+  }
 
-  //  var finalResult = 0
-  //  for (r <- results) {
-  //    if (???) finalResult = finalResult + 1
-  //    else ???
-  //  }
+  val results =
+  for (l <- locals;
+      f <- foreigners) yield {
+      val (localName, localValue) = (l._1, convertToInt(l._2))
+      val (foreignName, foreignValue) = (f._1, convertToInt(f._2))
 
-  print("Победила дружба")
+    (localName + " vs " + foreignName, localValue - foreignValue)
+    }
+
+
+  var finalResult = 0
+  for (r <- results) {
+    if (r._2 > 0) finalResult = finalResult + 1
+    else if (r._2 < 0) finalResult = finalResult - 1
+  }
+
+  if (finalResult > 0) print("Наша взяла")
+  else if (finalResult < 0) print("Продули")
+  else print("Победила дружба")
 }

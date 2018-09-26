@@ -25,12 +25,12 @@ object EvaluateOptimization extends App with Data {
 
   // --------------------------------------------------------------------------
   // Вызовы
-    // Thread.sleep(10)
     // filterData.split(" ")
-    // Thread.sleep(100)
+    // dataProducer.filter
   // будут осуществляться каждый раз при вызове computation, то есть 100 раз,
-  // поэтому время ~ 100 * (10 + 100 + t),
-  // где t - это время выполнения filterData.split и dataProducer.filter
+  // поэтому время ~ 100 * (t1 + t2),
+  // где t1 - время выполнения filterData.split,
+  // t2 - dataProducer.filter
   // --------------------------------------------------------------------------
   for (_ <- gen) {
     Computation.computation(filterData, dataArray)
@@ -48,9 +48,10 @@ object EvaluateOptimization extends App with Data {
   // partiallyAppliedCurriedFunction  работает по сути также,
   // как computation, только сначала фиксируется первый агрумент,
   // и когда поступает второй аргумент - осуществляется вызов
-  // функции. Поэтому время практически совпадает, возможно, есть
-  // небольшой выигрыш из-за того что не нужно каждый раз
-  // переподсчитывать filterData
+  // функции.
+  // Время работы ~ 100 * (t1 + t2),
+  // где t1 - это время выполнения filterData.split,
+  // t2 - dataProducer.filter
   // --------------------------------------------------------------------------
   for (_ <- gen) {
     CurriedComputation.partiallyAppliedCurriedFunction(dataArray)
@@ -64,13 +65,10 @@ object EvaluateOptimization extends App with Data {
   // ВЫПОЛНИТЬ В ЦИКЛЕ ОТ 1 ДО 100 FunctionalComputation.filterApplied
 
   // --------------------------------------------------------------------------
-  // Вызовы
-    // Thread.sleep(10)
-    // filterData.split(" ")
-    // Thread.sleep(100)
-  // будут выполнены 1 раз при инициализации функции filterApplied,
+  // Вызов filterData.split
+  // будут выполнен 1 раз при инициализации функции filterApplied,
   // далее будет вызываться внутренняя функция computation
-  // поэтому время ~ 100 + 10 + t1 + 100 * t2,
+  // поэтому время ~ t1 + 100 * t2,
   // где t1 - это время выполнения filterData.split
   // t2 - время выполнения dataProducer.filter
   // --------------------------------------------------------------------------

@@ -1,11 +1,9 @@
 package lectures.functions
 
-import scala.util.Random
-
 /**
   * Эта задача имитирует авторизацию в интернет банке.
   * Авторизоваться можно 2-я способами. Предоставив карту или логин/пароль
-  * Вам дан список зарегистрированных банковских карт и
+  * Вам дан список зарегистрированных банковских карт
   * AuthenticationData.registeredCards
   * и список зарегистрированных логинов/паролей
   * AuthenticationData.registeredLoginAndPassword
@@ -30,12 +28,20 @@ object Authentication extends App {
 
   import AuthenticationData._
 
-// val authByCard: PartialFunction[???, ???] = ???
+  val authByCard: PartialFunction[CardUser, User] = {
+    case user if registeredCards.contains(user.credentials) => user
+  }
 
-// val authByLP: PartialFunction[???, ???] = ???
+ val authByLP: PartialFunction[LPUser, User] = {
+   case user if registeredLoginAndPassword.contains(user.credentials) => user
+ }
 
   val authenticated: List[Option[User]] = for (user <- testUsers) yield {
-    ???
+    user match {
+      case user: CardUser => authByCard.lift(user)
+      case user: LPUser => authByLP.lift(user)
+      case _ => None
+    }
   }
 
  authenticated.flatten foreach println

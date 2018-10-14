@@ -61,8 +61,7 @@ object OptionVsNPE extends App {
 
   private def getConnection(resource: Resource): Connection = {
     val connection: Option[Connection] = Option(ConnectionProducer.produce(resource))
-    if (connection.nonEmpty) connection.orNull
-    else getConnection(resource)
+    connection.getOrElse(getConnection(resource))
   }
 
   private def getResource(): Resource = {

@@ -38,9 +38,6 @@ object Computation extends Data {
 object CurriedComputation extends Data {
 
   def curriedComputation(filterData: String)(dataProducer: Array[String]): Array[String] = {
-      //PRODUCE WORDS ARRAY FROM A STRING
-      val filterArray = filterData.split(" ")
-
       //EMULATE HEAVY LOAD
       Thread.sleep(10)
       //PRODUCE WORDS ARRAY FROM A STRING
@@ -67,9 +64,6 @@ object CurriedComputation extends Data {
 object FunctionalComputation extends Data {
 
   def functionalComputation(filterData: String): (Array[String]) => Array[String] = {
-    //PRODUCE WORDS ARRAY FROM A STRING
-    val filterArray = filterData.split(" ")
-
     //EMULATE HEAVY LOAD
     Thread.sleep(10)
     //PRODUCE WORDS ARRAY FROM A STRING

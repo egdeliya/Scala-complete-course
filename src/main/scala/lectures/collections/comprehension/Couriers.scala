@@ -50,13 +50,9 @@ object CouriersWithComprehension extends App {
 
   // какие адреса были обслужены
   def serveAddresses(addresses: List[Address], couriers: List[Courier]): List[Address] = {
-    couriers
-      .filter(_ => traffic().degree < 5)
-      .foldLeft(List[Address]())((addressesAcc, courier) =>
-        addressesAcc ::: addresses.slice(
-            addressesAcc.length,
-            addressesAcc.length + courier.canServe
-          )
+
+    addresses
+        .take(couriers.filter(_ => traffic().degree < 5).flatMap(courier => List.fill(courier.canServe)()).size
         )
   }
 

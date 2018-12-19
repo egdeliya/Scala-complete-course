@@ -1,5 +1,7 @@
 package lectures.collections
 
+import scala.collection.mutable.ListBuffer
+
 /**
   * Представим, что по какой-то причине Вам понадобилась своя обертка над списком целых чисел List[Int]
   *
@@ -17,31 +19,32 @@ package lectures.collections
   */
 object MyListImpl extends App {
 
-  case class MyList(data: List[Int]) {
+  case class MyList[T, DataType <: Seq[T]](data: DataType) {
 
-    def flatMap(f: (Int => MyList)) =
-      MyList(data.flatMap(inp => f(inp).data))
-
-    def map(f: Int => Int): MyList = {
-      flatMap(elem => MyList(List(f(elem))))
+    def flatMap[U](f: (T => Seq[U])): MyList[U, Seq[U]] = {
+      MyList(data.flatMap(inp => f(inp)))
     }
 
-    def foldLeft(acc: Int)(f: ((Int, Int)) => Int): Int = data match {
-        case Nil => acc
-        case head :: tail => MyList(tail).foldLeft(f(acc, head))(f)
+    def map[U](f: T => U): MyList[U, Seq[U]] = {
+      flatMap[U](elem => Seq(f(elem)))
     }
 
-    def filter(f: Int => Boolean): MyList = {
-      this.flatMap(elem => {
-        if (f(elem)) MyList(List(elem))
-        else MyList(List.empty)
+    def foldLeft(acc: T)(f: ((T, T)) => T): T = data match {
+        case Seq() => acc
+        case head +: tail => MyList[T, Seq[T]](tail).foldLeft(f(acc, head))(f)
+    }
+
+    def filter(f: T => Boolean): MyList[T, Seq[T]] =
+      flatMap[T](elem => {
+        if (f(elem)) Seq(elem)
+        else Seq.empty
       })
     }
-  }
 
-  require(MyList(List(1, 2, 3, 4, 5, 6)).map(_ * 2).data == List(2, 4, 6, 8, 10, 12))
-  require(MyList(List(1, 2, 3, 4, 5, 6)).filter(_ % 2 == 0).data == List(2, 4, 6))
-  require(MyList(List(1, 2, 3, 4, 5, 6)).foldLeft(0)((tpl) => tpl._1 + tpl._2) == 21)
-  require(MyList(Nil).foldLeft(0)((tpl) => tpl._1 + tpl._2) == 0)
+
+
+  class MyListBuffer[T](data: ListBuffer[T]) extends MyList[T, ListBuffer[T]](data) {}
+
+  class MyIndexedList[T](data: IndexedSeq[T]) extends MyList[T, IndexedSeq[T]](data) {}
 
 }

@@ -1,7 +1,9 @@
 package lectures.concurrent
 
-import scala.concurrent.Future
+import java.util.concurrent.atomic.AtomicReference
 
+import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 /**
   * Smooth - это своебразный функциональный кэш, предназначенный для исключения повторных вызовов кода
   * до того, как получен результат первого вызова.
@@ -15,10 +17,22 @@ import scala.concurrent.Future
   * Подсказка: можно использовать AtomicReference
   *
   */
-object Smooth{
-  //def apply(thunk: =>): Smooth = ???
+object Smooth {
+  def apply[T](thunk: => T): Smooth[T] = new Smooth(thunk)
 }
 
-class Smooth {
-   def apply(): Future[_] = ???
+class Smooth[T] private (body: => T) {
+  private val workingFuture: AtomicReference[Future[T]] = new AtomicReference(null)
+
+  def apply(): Future[T] = {
+
+    if (workingFuture.get() == null || workingFuture.get().isCompleted) {
+      val newFuture = Future {
+        body
+      }
+      workingFuture.set(newFuture)
+    }
+
+    workingFuture.get()
+  }
 }
